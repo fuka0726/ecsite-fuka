@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.form.UserRegisterForm;
 import com.example.service.ResisterUserService;
 
+/**
+ * @author fuka
+ *
+ */
 @Controller
 @RequestMapping("")
 public class ResisterUserController {
