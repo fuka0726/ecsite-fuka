@@ -23,6 +23,7 @@ public class ShowItemListService {
 
 	/**
 	 * 商品情報を全件取得します.
+	 * @param integer 
 	 * 
 	 * @return 商品情報一覧
 	 */
@@ -36,6 +37,7 @@ public class ShowItemListService {
 	 * 名前から商品を曖昧検索します.
 	 * 
 	 * @param name 商品名
+	 * @param integer 
 	 * @return 検索された商品一覧
 	 */
 	public List<Item> searchByName(String name) {

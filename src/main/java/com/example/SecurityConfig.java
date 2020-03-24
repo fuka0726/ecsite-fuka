@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		http.authorizeRequests() //認証に関する設定
-		.antMatchers("/", "/tologin" , "/login", "/show-register", "/register-user")
+		.antMatchers("/", "/tologin" , "/login", "/show-register", "/register-user","/showItemList")
 		.permitAll() //ログインしなくても使用できるパスを指定
 		.anyRequest().authenticated(); //上記で指定したパス以外は認証が必要
 
@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.loginPage("/tologin") //ログインする時のパス
 			.loginProcessingUrl("/login") //ログインボタンを押した際に遷移させるパス
 			.failureUrl("/tologin?error=true") //ログイン失敗時のパス
-			.defaultSuccessUrl("/login-success, true") //デフォルトでログイン成功時に遷移させるパス
+			.defaultSuccessUrl("/showItemList", true) //デフォルトでログイン成功時に遷移させるパス
 			.usernameParameter("email")
 			.passwordParameter("password");
 		

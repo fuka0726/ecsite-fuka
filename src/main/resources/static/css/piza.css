@@ -21,3 +21,12 @@ span#total-price {
 .item-list-table{
 	table-layout: fixed;
 }
+
+.flex-list{
+        display: flex;
+        flex-wrap:wrap;
+}
+
+.flex-list th{
+        width:50%;
+}
