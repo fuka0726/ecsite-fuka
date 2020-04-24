@@ -11,9 +11,22 @@ import org.springframework.stereotype.Repository;
 
 import com.example.domein.Topping;
 
+/**
+ * toppingテーブルを表すレポジトリ.
+ * @author fuka
+ *
+ */
 @Repository
 public class ToppingRepository {
 
+	@Autowired
+	private NamedParameterJdbcTemplate template;
+	
+	
+	
+	/**
+	 * Toppingオブジェクトを生成するローマッパー/
+	 */
 	private static final RowMapper<Topping> TOPPING_ROW_MAPPER = (rs, i) -> {
 		Topping topping = new Topping();
 		topping.setId(rs.getInt("id"));
@@ -23,23 +36,24 @@ public class ToppingRepository {
 
 		return topping;
 	};
-	@Autowired
-	private NamedParameterJdbcTemplate template;
-	
+
+
 	/**
 	 * トッピングを全件検索.
-	 * @return
+	 * 
+	 * @return トッピング一覧
 	 */
-//	public List<Topping> findAll() {
-//		String sql = "SELECT id,name,price_m,price_l from toppings ORDER BY id";
-//		List<Topping> toppingList = template.query(sql, TOPPING_ROW_MAPPER);
-//		return toppingList;
-//	}
+	public List<Topping> findAll() {
+		String sql = "SELECT id,name,price_m,price_l from toppings ORDER BY id";
+		List<Topping> toppingList = template.query(sql, TOPPING_ROW_MAPPER);
+		return toppingList;
+	}
 	
 	/**
 	 * IDから該当するトッピング情報を取得します.
-	 * @param id
-	 * @return
+	 * 
+	 * @param id ID
+	 * @return トッピング情報
 	 */
 	public Topping load(Integer id) {
 		String sql = "SELECT id,name,price_m,price_l FROM toppings WHERE id = :id";
@@ -47,9 +61,18 @@ public class ToppingRepository {
 		Topping topping = template.queryForObject(sql, param, TOPPING_ROW_MAPPER);
 		return topping;
 	}
-	
-	
-	
-	
-	
+
+	/**
+	 * 注文トッピングIDから該当するトッピングを取得.
+	 * 
+	 * @param toppingId
+	 * @return 注文トッピングリスト
+	 */
+	public Topping findByToppingId(Integer toppingId) {
+		String sql = "SELECT id,name,price_m,price_l from toppings where id= :topping_id ORDER BY id";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("topping_id", toppingId);
+		Topping topping = template.queryForObject(sql, param, TOPPING_ROW_MAPPER);
+		return topping;
+	}
+
 }

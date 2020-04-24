@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		http.authorizeRequests() //認証に関する設定
-		.antMatchers("/", "/tologin" , "/login", "/show-register", "/register-user","/showItemList")
+		.antMatchers("/", "/tologin" , "/login", "/show-register", "/register-user","/showItemList" ,"/showItemDetail","/show-cart", "/add-item", "/remove-order-item" )
 		.permitAll() //ログインしなくても使用できるパスを指定
 		.anyRequest().authenticated(); //上記で指定したパス以外は認証が必要
 

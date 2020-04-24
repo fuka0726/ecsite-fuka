@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -48,16 +49,15 @@ public class ResisterUserController {
 	 */
 	@RequestMapping("/register-user")
 	public String resisterUser(@Validated UserRegisterForm form, BindingResult result) {
-		if(!(form.getPassword().equals(form.getConfirmPassword()))) {
-			System.out.println(form.getName());
-		//パスワード確認
-		result.rejectValue("password", "", "パスワードが一致してません" );
-		result.rejectValue("confirmPassword", "", "");
+		
+		//メールアドレスの確認
+		if(service.findByMail(form.getEmail()) != null){
+			result.rejectValue("email", "", "そのメールアドレスは既に登録されています");
 		}
 		
-		//メールアドレスが重複している場合の処理
-		if (service.findByMail(form.getEmail()) != null) {
-			result.rejectValue("email", "", "そのメールアドレスは既に登録されています");
+		//パスワードの確認
+		if(!form.getPassword().equals(form.getConfirmPassword())) {
+			result.rejectValue("password", "", "パスワードが一致してません");
 		}
 		
 		//エラーがある場合は登録画面に遷移
@@ -66,15 +66,11 @@ public class ResisterUserController {
 		}
 		
 		User user = new User();
-		user.setName(form.getName());
-		user.setEmail(form.getEmail());
-		user.setZipcode(form.getZipcode());
-		user.setAddress(form.getAddress());
-		user.setTelephone(form.getTelephone());
-		user.setPassword(form.getPassword());
+		BeanUtils.copyProperties(form, user);
 		service.insert(user);
+		return "redirect:/tologin";
+		
 
-		return "login";
 	}
 	
 	

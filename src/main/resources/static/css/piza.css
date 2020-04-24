@@ -1,5 +1,15 @@
 @CHARSET "UTF-8";
 
+.flex-list{
+        display: flex;
+        flex-wrap:wrap;
+}
+
+.flex-list th{
+        width:33%;
+}
+
+
 /* サイズをオレンジ〇で囲む */
 span.price {
  /* サイズ指定 */
@@ -22,11 +32,3 @@ span#total-price {
 	table-layout: fixed;
 }
 
-.flex-list{
-        display: flex;
-        flex-wrap:wrap;
-}
-
-.flex-list th{
-        width:50%;
-}

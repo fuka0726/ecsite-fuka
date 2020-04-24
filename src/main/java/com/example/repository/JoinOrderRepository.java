@@ -19,26 +19,29 @@ import com.example.domein.Topping;
 
 /**
  * 注文リストをくっつける時のリポジトリ.
+ * カートの中身
  * 
- * @author shumpei
+ * @author fuka
  *
  */
 @Repository
 public class JoinOrderRepository {
 
 	/**
-	 * 5テーブルを結合したものからorderリストを作成する.
+	 * 5テーブルを結合したものからorderリストを作成する.   //表示
+	 *１対多の関係のテーブルを結合して表示したいときにローマッパーではなくResultSetExtractorを使う
+	 *SQL発行が一回で済む
 	 */
-	private static final ResultSetExtractor<List<Order>> ORDER_RESULT_SET_EXTRACTOR = (rs) -> {
+	private static final ResultSetExtractor<List<Order>> ORDER_RESULT_SET_EXTRACTOR = (rs) -> {   
 		List<Order> orderList = new LinkedList<Order>();
 		List<OrderItem> orderItemList = null;
 		List<OrderTopping> orderToppingList = null;
-		long orderIdToCheck = 0;
-		long orderItemIdToCheck = 0;
+		long orderIdToCheck = 0;   //orderIdの初期化
+		long orderItemIdToCheck = 0; //itemIdの初期化
 		while (rs.next()) {
 			// データベースの検索値からOrderのIDを取得する
-			int orderIdFromTable = rs.getInt("A_id");
-			// 取得したOrderのIDが1つ前のループと重複しなければ記事をインスタンス化する
+			int orderIdFromTable = rs.getInt("A_id");   //Aはorderテーブル
+			// 取得したOrderのIDが1つ前のループと重複しなければOrderをインスタンス化する
 			if (orderIdToCheck != orderIdFromTable) {
 				Order order = new Order();
 				order.setId(orderIdFromTable);
@@ -59,7 +62,7 @@ public class JoinOrderRepository {
 				orderList.add(order);
 			}
 			// データベースの検索値からOrderItemのIDを取得する
-			int orderItemIdFromTable = rs.getInt("B_id");
+			int orderItemIdFromTable = rs.getInt("B_id");   //BはOrderItemテーブル
 			// 取得したOrderItemのIDが1つ前のループと重複しなければOrderItemをインスタンス化
 			if (orderItemIdToCheck != orderItemIdFromTable) {
 				OrderItem orderItem = new OrderItem();
@@ -71,7 +74,7 @@ public class JoinOrderRepository {
 				orderItemList.add(orderItem);
 				// OrderItemに連動するItemをインスタンス化
 				Item item = new Item();
-				item.setId(rs.getInt("C_id"));
+				item.setId(rs.getInt("C_id"));   //CはItemテーブル
 				item.setName(rs.getString("C_name"));
 				item.setDescription(rs.getString("C_description"));
 				item.setPriceM(rs.getInt("C_price_m"));
@@ -84,13 +87,14 @@ public class JoinOrderRepository {
 				orderItem.setOrderToppingList(orderToppingList);
 			}
 			// データベースからOrderToppingを取得できればインスタンス化する
-			if (rs.getInt("D_id") != 0) {
+			if (rs.getInt("D_id") != 0) {   //DはOrderToppingテーブル
 				OrderTopping orderTopping = new OrderTopping();
 				orderTopping.setId(rs.getInt("D_id"));
 				orderTopping.setToppingId(rs.getInt("D_topping_id"));
 				orderTopping.setOrderItemId(rs.getInt("D_order_item_id"));
+				//OrderToppingに連動するtoppingをインスタンス化
 				Topping topping = new Topping();
-				topping.setId(rs.getInt("E_id"));
+				topping.setId(rs.getInt("E_id"));  //EはToppingテーブル
 				topping.setName(rs.getString("E_name"));
 				topping.setPriceM(rs.getInt("E_price_m"));
 				topping.setPriceL(rs.getInt("E_price_l"));

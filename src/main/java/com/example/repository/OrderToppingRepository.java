@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.example.domein.OrderTopping;
 
 /**
- * 注文したトッピングを管理するリポジトリクラス.
+ * 注文したトッピングを管理するリポジトリ.
  * 
  * @author fuka
  *
@@ -21,6 +21,9 @@ import com.example.domein.OrderTopping;
 @Repository
 public class OrderToppingRepository {
 
+	/**
+	 * orderToppingオブジェクトを生成するローマッパー.
+	 */
 	private final static RowMapper<OrderTopping> ORDER_TOPPING_ROWMAPPER = (rs, i) -> {
 		OrderTopping orderTopping = new OrderTopping();
 		orderTopping.setId(rs.getInt("id"));
@@ -35,31 +38,36 @@ public class OrderToppingRepository {
 	/**
 	 * IDからトッピング情報を取得します.
 	 * 
-	 * @param id ID
-	 * @return トッピングリスト
+	 * @param id 注文商品ID　　add
+	 * @return 注文したトッピングリスト
 	 */
-	public List<OrderTopping> findByOrderId(Integer id) {
-		String sql = "SELECT id, topping_id, order_item_id FROM order_toppings WHERE id = :id ORDER BY id";
-		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+	public List<OrderTopping> findByOrderItemId(Integer orderItemId) {
+		String sql = "SELECT id, topping_id, order_item_id FROM order_toppings WHERE id = :id ORDER BY orderItemId";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("orderItemId", orderItemId);
 		List<OrderTopping> orderToppingList = template.query(sql, param, ORDER_TOPPING_ROWMAPPER);
 		return orderToppingList;
 	}
 	
-//	public void deleteById(Integer orderItemId) {
-//		String sql = "DELETE FROM order_toppings WHERE order_item_id = :orderItemId;";
-//		SqlParameterSource param = new MapSqlParameterSource().addValue("orderItemId", orderItemId);
-//		template.update(sql, param);
-//	}
-	
 	/**
-	 * オーダートッピング情報を挿入します.
+	 * オーダートッピング情報を挿入します. //add
 	 * 
-	 * @param orderTopping オーダートッピング情報
+	 * @param orderTopping オーダートッピング情報  
 	 */
 	public void insert(OrderTopping orderTopping) {
 		String sql = "INSERT INTO order_toppings (topping_id,order_item_id) VALUES (:toppingId,:orderItemId);";
 		SqlParameterSource param = new BeanPropertySqlParameterSource(orderTopping);
 		template.update(sql, param);
 	}
+	
+	/**
+	 * orderItemIdが一致するトッピングを削除するメソッド. //delete
+	 * @param orderItemId　カート内の商品ID
+	 */
+//	public void deleteByOrderItemId(Integer orderItemId) {
+//		String sql = "DELETE FROM order_toppings WHERE order_item_id = :orderItemId;";
+//		SqlParameterSource param = new MapSqlParameterSource().addValue("orderItemId", orderItemId);
+//		template.update(sql, param);
+//	}
+	
 
 }

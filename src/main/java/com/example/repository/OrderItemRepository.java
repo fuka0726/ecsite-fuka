@@ -16,9 +16,22 @@ import org.springframework.stereotype.Repository;
 
 import com.example.domein.OrderItem;
 
+/**
+ * 注文商品テーブルを操作するためのリポジトリクラス.
+ * @author fuka
+ *
+ */
 @Repository
 public class OrderItemRepository {
+	
+	@Autowired
+	private NamedParameterJdbcTemplate template;
+	
+	private SimpleJdbcInsert insert;
 
+	/**
+	 * OrderItemオブジェクトを生成するローマッパー.
+	 */
 	private final static RowMapper<OrderItem> ORDER_ITEM_ROWMAPPER = (rs, i) -> {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setId(rs.getInt("id"));
@@ -26,27 +39,28 @@ public class OrderItemRepository {
 		orderItem.setOrderId(rs.getInt("order_id"));
 		orderItem.setQuantity(rs.getInt("quantity"));
 		orderItem.setSize(rs.getString("size").toCharArray()[0]);
+		//sizeはドメインがchar型のため、String→Char型に変換
+		//String size = rs.getString("size);
+		//char[] charSize = size.toCharArray();
+		//orderItem.setSize(charSize[0]);
 		return orderItem;
 	};
-	
-	@Autowired
-	private NamedParameterJdbcTemplate template;
-	
-	private SimpleJdbcInsert insert;
-	
-	
+
+
+	/**
+	 * テーブルにデータ挿入時、挿入したオブジェクトのidを取得するために必要なメソッド. //add
+	 */
 	@PostConstruct
 	public void init() {
 		SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert((JdbcTemplate) template.getJdbcOperations());
 		SimpleJdbcInsert withTableName = simpleJdbcInsert.withTableName("order_items");
 		insert = withTableName.usingGeneratedKeyColumns("id");
 	}
-	
 	/**
-	 * オーダーアイテム情報をDB上に挿入します.
-	 * 
-	 * @param orderItem オーダーアイテム情報
-	 * @return オーダーアイテム情報
+	 * 注文商品情報をDB上に挿入します.　//add
+	 * カートに追加した時にorder_itemsテーブルに格納するメソッド.
+	 * @param orderItem 注文商品
+	 * @return id情報を持った注文商品
 	 */
 	public OrderItem insert(OrderItem orderItem) {
 		SqlParameterSource param = new BeanPropertySqlParameterSource(orderItem);
@@ -54,9 +68,9 @@ public class OrderItemRepository {
 		orderItem.setId(key.intValue());
 		return orderItem;
 	}
-	
+
 	/**
-	 * 注文IDから該当する注文アイテム（商品の概要と注文内容）を取得します.
+	 * 注文IDから該当する注文アイテム（商品の概要と注文内容）を取得します. //add
 	 * 
 	 * @param orderId
 	 * @return 注文アイテムリスト
@@ -67,4 +81,31 @@ public class OrderItemRepository {
 		List<OrderItem> orderItemList = template.query(sql, param, ORDER_ITEM_ROWMAPPER);
 		return orderItemList;
 	}
+
+	/**
+	 * IDに紐づく注文アイテムと注文トッピングを削除します. //delete
+	 * 主キーを元にorderItemとそれに紐づいているorder_toppingをDBから削除する.
+	 * @param id
+	 */
+	public void deleteByID(Integer id) {
+		String sql = "WITH deleted AS (DELETE FROM order_items WHERE id = :id RETURNING id) "
+				+ "DELETE FROM order_toppings WHERE order_item_id IN (SELECT id FROM deleted)";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+		template.update(sql, param);
+	}
+
+
+	/**
+	 * 注文商品のユーザーIDを更新します.
+	 * ログイン前に追加した商品をログイン後に反映し、削除するメソッド.
+	 * @param loginOrderId
+	 * @param dummyOrderId
+	 */
+	public void updateUserId(int loginOrderId, int dummyOrderId) {
+		String sql = "UPDATE order_items SET order_id = :loginOrderId WHERE order_id = :dummyOrderId";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("loginOrderId", loginOrderId)
+				.addValue("dummyOrderId", dummyOrderId);
+		template.update(sql, param);
+	}
+
 }

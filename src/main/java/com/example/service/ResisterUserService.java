@@ -8,6 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.domein.User;
 import com.example.repository.UserRepository;
 
+/**
+ * ユーザー登録の業務処理を行うサービスクラスです.
+ * @author fuka
+ *
+ */
 @Service
 @Transactional
 public class ResisterUserService {
