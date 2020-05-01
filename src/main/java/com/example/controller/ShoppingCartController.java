@@ -68,7 +68,6 @@ public class ShoppingCartController {
 			model.addAttribute("message", "カート内に商品はありません");
 		}
 		model.addAttribute("order", order);
-		System.out.println(order);
 		return "cart_list";
 	}
 

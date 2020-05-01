@@ -80,7 +80,6 @@ public class ShoppingCartService {
 			orderItem.setOrderId(userOrder.getId());
 			orderItem.setSize(form.getSize().toCharArray()[0]);
 			orderItem.setQuantity(Integer.parseInt(form.getQuantity()));
-			System.out.println(orderItem);
 			orderItem = orderItemRepository.insert(orderItem);
 
 			// OrderToppingオブジェクトにtoppingIdとorderItemIdを格納

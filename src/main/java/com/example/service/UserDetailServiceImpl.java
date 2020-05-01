@@ -37,6 +37,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		return new LoginUser(user, authorityList); //新しいエンティティを返す.
 	}
 	
+	/**
+	 * userIdで検索してUser情報を返す
+	 * @param userId
+	 * @return
+	 */
+	public User findByUserId(Integer userId) {
+		User user = repository.findByUserId(userId);
+		return user;
+	}
 
 	
 }
