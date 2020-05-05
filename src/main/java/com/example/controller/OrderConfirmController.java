@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.mail.MailSender;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +19,16 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
+import com.example.domein.CreditCardApi;
 import com.example.domein.LoginUser;
 import com.example.domein.Order;
 import com.example.domein.User;
+import com.example.form.CreditCardForm;
 import com.example.form.OrderForm;
+import com.example.service.CreditCardApiService;
 import com.example.service.OrderConfirmService;
 import com.example.service.ShoppingCartService;
 import com.example.service.UserDetailServiceImpl;
@@ -43,6 +50,18 @@ public class OrderConfirmController {
 	
 	@Autowired
 	private UserDetailServiceImpl userDetailServiceImpl;
+	
+	@Autowired
+	private CreditCardApiService CreditCardApiService;
+	
+	@Autowired
+	private MailSender sender;
+	
+	//Web API を呼び出すためのメソッドを提供するクラス
+	@Bean
+	RestTemplate RestTemplate() {
+		return new RestTemplate();
+	}
 	
 	@ModelAttribute
 	public OrderForm SetUpForm() {
@@ -66,7 +85,18 @@ public class OrderConfirmController {
 		return "order_confirm";
 	}
 	
-	@RequestMapping("/completeOrder")
+	
+	/**
+	 * お届け先情報を取得し、注文を確定する.
+	 * 
+	 * @param form　お届け先情報
+	 * @param resultset　エラーメッセージを格納するオブジェクト
+	 * @param userId　ユーザーid
+	 * @param model　リクエストスコープ
+	 * @param loginUser　利用者ユーザー
+	 * @return　注文完了画面(リダイレクト)
+	 */
+	@RequestMapping(value = "/completeOrder" , method = RequestMethod.POST)
 	public String completeOrder(@Validated OrderForm form, BindingResult resultset, Integer userId, Model model, 
 			@AuthenticationPrincipal LoginUser loginUser) {
 		System.out.println(form);
@@ -118,10 +148,58 @@ public class OrderConfirmController {
 		} else {
 			order.setStatus(2);
 		}
+		
+		
+		//クレカ機能実装-------------------------------------
 		//カード決済用のオブジェクト生成
+		CreditCardForm creditCardForm  = new CreditCardForm();
+		//リクエストパラメーターで受け取った値をカード決済用のオブジェクトに入れ替える
+		BeanUtils.copyProperties(form, creditCardForm);
 		
+		//注文確認メールに詳細情報を記載するためsql発行(カード決済のための注文idをここで取得したいため)
+		List<Order> orderList = orderConfirmService.showOrderList(loginUser.getUser().getId());
+		//カード決済のため注文idをセット
+		for (Order id : orderList ) {
+			creditCardForm.setOrder_number(id.getId());
+		}
 		
+		creditCardForm.setAmount(ordered.getCalcTotalPrice() + ordered.getTax());
+		creditCardForm.setUser_id(loginUser.getUser().getId());
 		
+		//クレジット決済のwebapiにリクエスト送信する
+		System.out.println(creditCardForm.getCard_cvv());
+		System.out.println(creditCardForm.getCard_exp_month());
+		System.out.println(creditCardForm.getCard_exp_year());
+		System.out.println(creditCardForm.getCard_name());
+		System.out.println(creditCardForm.getCard_number());
+		System.out.println(creditCardForm.getOrder_number());
+		System.out.println(creditCardForm.getUser_id());
+		CreditCardApi creditCardApi = null;
+		
+		//注文ステータス「2」を選択したら、
+		//注文確認画面で入力されたクレジットカード情報を受け取りクレジットAPIに接続する
+		if (order.getPaymentMethod() == 2) {
+			creditCardApi = CreditCardApiService.service(creditCardForm);
+			System.out.println(creditCardApi);
+		}
+		
+		// E-01:カードの有効期限が実行時年月よりも「前」だった場合
+		if(order.getPaymentMethod() == 2 && creditCardApi.getError_code().equals("E-01")) {
+			FieldError creditApiError = new FieldError(resultset.getObjectName(), "error_code", "カードの有効期限が切れています");
+			resultset.addError(creditApiError);
+			
+		// E-02:セキュリティーコードが「123」でなかった場合
+		} else if (order.getPaymentMethod() == 2 && creditCardApi.getError_code().equals("E-02")) {
+			FieldError creditApiError = new FieldError(resultset.getObjectName(), "error_code", "カード情報が不正です");
+			resultset.addError(creditApiError);
+		
+		// E-03:カード番号、有効期限、セキュリティーコードが数字以外の値渡された場合
+		} else if (order.getPaymentMethod() == 2 && creditCardApi.getError_code().equals("E-03")) {
+			FieldError creditApiError = new FieldError(resultset.getObjectName(), "error_code", "カード番号、有効期限、セキュリティーコードは数値で入力して下さい");
+			resultset.addError(creditApiError);
+			
+			return orderConfirm(userId, model, loginUser);
+		}
 		
 		//注文情報を更新する
 		orderConfirmService.updateStatus(order);
