@@ -57,6 +57,9 @@ public class OrderForm {
 	
 	/** ユーザーID */
 	private Integer userId;
+	
+	/** クレジット決済apiのエラーメッセージ(入力値チェック用) */
+	private String error_code;
 
 	public String getDestinationName() {
 		return destinationName;
@@ -170,6 +173,14 @@ public class OrderForm {
 		this.userId = userId;
 	}
 
+	public String getError_code() {
+		return error_code;
+	}
+
+	public void setError_code(String error_code) {
+		this.error_code = error_code;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderForm [destinationName=" + destinationName + ", destinationEmail=" + destinationEmail
@@ -177,10 +188,8 @@ public class OrderForm {
 				+ ", destinationTel=" + destinationTel + ", deliveryDate=" + deliveryDate + ", deliveryHour="
 				+ deliveryHour + ", paymentMethod=" + paymentMethod + ", card_number=" + card_number
 				+ ", card_exp_year=" + card_exp_year + ", card_exp_month=" + card_exp_month + ", card_name=" + card_name
-				+ ", card_cvv=" + card_cvv + ", userId=" + userId + "]";
+				+ ", card_cvv=" + card_cvv + ", userId=" + userId + ", error_code=" + error_code + "]";
 	}
 
-	
-	
 	
 }

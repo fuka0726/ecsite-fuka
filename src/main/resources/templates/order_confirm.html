@@ -289,7 +289,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 									<div class="row">
 										<div class="col-sm-12">
 											<label class="radio-inline">
-												<input type="radio"
+												<input type="radio" class="paymentMethod"
 													name="paymentMethod" value="1" checked="checked">
 												代金引換
 											</label>
@@ -307,7 +307,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 									<div class="row">
 										<div class="col-sm-12">
 											<label class="radio-inline">
-												<input type="radio"
+												<input type="radio" class="paymentMethod"
 													name="paymentMethod" value="2" checked="checked">
 												クレジットカード
 											</label><br><br>
@@ -317,7 +317,8 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 							</tr>
 							<tr>
 								<td colspan="2" id="creditPayMethod">
-								<p>支払情報</p><span ></span>
+								<span th:errors="*{error_code}" style="color: red"></span>
+								<p>支払情報</p><br>
 								クレジットカード番号：<input type="text" id="card_number" name="card_number" maxlength="16"><br>
 								有効期限：
 								<select id="card_exp_month" name="card_exp_month" >
@@ -380,5 +381,6 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="../static/js/bootstrap.min.js"></script>
+	<script th:src="@{/js/creditcard.js}"></script>
 </body>
 </html>

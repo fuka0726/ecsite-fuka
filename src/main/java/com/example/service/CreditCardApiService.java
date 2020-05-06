@@ -21,7 +21,8 @@ public class CreditCardApiService {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	private static final String URL = "http://192.168.16.105:8080/sample-credit-card-web-api/credit-card/payment";
+	private static final String URL = "http://192.168.0.19:8080/sample-credit-card-web-api/credit-card/payment";
+	//private static final String URL = "http://172.16.0.19:8080/web-api-sample/credit-card/payment";
 	
 	
 	/**
