@@ -29,7 +29,6 @@ import com.example.domein.Order;
 import com.example.domein.OrderItem;
 import com.example.domein.OrderTopping;
 import com.example.domein.User;
-import com.example.form.CreditCardForm;
 import com.example.form.OrderForm;
 import com.example.service.CreditCardApiService;
 import com.example.service.OrderConfirmService;
@@ -152,34 +151,34 @@ public class OrderConfirmController {
 
 		// クレカ機能実装-------------------------------------
 		// カード決済用のオブジェクト生成
-		CreditCardForm creditCardForm = new CreditCardForm();
+//		CreditCardForm creditCardForm = new CreditCardForm();
 		// リクエストパラメーターで受け取った値をカード決済用のオブジェクトに入れ替える
-		BeanUtils.copyProperties(form, creditCardForm);
+//		BeanUtils.copyProperties(form, creditCardForm);
 
 		// 注文確認メールに詳細情報を記載するためsql発行(カード決済のための注文idをここで取得したいため)
 		List<Order> orderList = orderConfirmService.showOrderList(loginUser.getUser().getId());
 		// カード決済のため注文idをセット
-		for (Order id : orderList) {
-			creditCardForm.setOrder_number(id.getId());
-		}
+//		for (Order id : orderList) {
+//			creditCardForm.setOrder_number(id.getId());
+//		}
 
-		creditCardForm.setAmount(ordered.getCalcTotalPrice() + ordered.getTax());
-		creditCardForm.setUser_id(loginUser.getUser().getId());
+//		creditCardForm.setAmount(ordered.getCalcTotalPrice() + ordered.getTax());
+//		creditCardForm.setUser_id(loginUser.getUser().getId());
 
 		// クレジット決済のwebapiにリクエスト送信する
-		System.out.println(creditCardForm.getCard_cvv());
-		System.out.println(creditCardForm.getCard_exp_month());
-		System.out.println(creditCardForm.getCard_exp_year());
-		System.out.println(creditCardForm.getCard_name());
-		System.out.println(creditCardForm.getCard_number());
-		System.out.println(creditCardForm.getOrder_number());
-		System.out.println(creditCardForm.getUser_id());
+//		System.out.println(creditCardForm.getCard_cvv());
+//		System.out.println(creditCardForm.getCard_exp_month());
+//		System.out.println(creditCardForm.getCard_exp_year());
+//		System.out.println(creditCardForm.getCard_name());
+//		System.out.println(creditCardForm.getCard_number());
+//		System.out.println(creditCardForm.getOrder_number());
+//		System.out.println(creditCardForm.getUser_id());
 		CreditCardApi creditCardApi = null;
 
 		// 注文ステータス「2」を選択したら、
 		// 注文確認画面で入力されたクレジットカード情報を受け取りクレジットAPIに接続する
 		if (order.getPaymentMethod() == 2) {
-			creditCardApi = CreditCardApiService.service(creditCardForm);
+			creditCardApi = CreditCardApiService.service(form);
 			System.out.println(creditCardApi);
 		}
 
@@ -206,6 +205,9 @@ public class OrderConfirmController {
 		// 注文情報を更新する
 		orderConfirmService.updateStatus(order);
 
+		// メール送信するメソッドを呼ぶ.
+				sendEmail(order, orderList);
+		
 		return "redirect:/tocomplete";
 
 	}
@@ -278,7 +280,7 @@ public class OrderConfirmController {
 		SimpleMailMessage msg = new SimpleMailMessage();
 		
 		//送り主
-		msg.setFrom("fuuka.pyop@gmail.com");
+		msg.setFrom("usatei@com");
 		//宛先
 		msg.setTo("fuuka.pyop@gmail.com"); // order.getDestinationEmail()を本来入れる
 		//件名

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.domein.CreditCardApi;
-import com.example.form.CreditCardForm;
+import com.example.form.OrderForm;
 
 /**
  * 
@@ -31,8 +31,8 @@ public class CreditCardApiService {
      * @param form 注文確認画面で入力されたクレジットカード情報が入っている
      * @return APIから返ってきた情報がCreditクラスのフィールドの形に格納される
      */
-	public CreditCardApi service(CreditCardForm creditCardForm) {
-		return restTemplate.postForObject(URL, creditCardForm, CreditCardApi.class);
+	public CreditCardApi service(OrderForm form) {
+		return restTemplate.postForObject(URL, form, CreditCardApi.class);
 	}
 	
 	
