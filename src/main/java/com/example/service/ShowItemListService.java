@@ -1,12 +1,13 @@
 package com.example.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.domein.Item;
+import com.example.form.SearchForm;
 import com.example.repository.ItemRepository;
 
 /**
@@ -16,6 +17,7 @@ import com.example.repository.ItemRepository;
  *
  */
 @Service
+@Transactional
 public class ShowItemListService {
 
 	@Autowired
@@ -32,6 +34,31 @@ public class ShowItemListService {
 		return itemList;
 	}
 
+	
+	/**
+	 * 商品検索を行う
+	 * @param form
+	 * @return　検索結果
+	 */
+	public List<Item> search(SearchForm form) {
+		List<Item> itemList = itemRepository.search(form);
+		return itemList;
+	}
+	
+	
+	/**
+	 * 検索にヒットした件数を取得する
+	 * @param form　商品検索フォーム
+	 * @return　検索ヒット数
+	 */
+	public Integer count(SearchForm form) {
+		Integer item = itemRepository.count(form);
+		return item;
+	}
+	
+	
+	
+	
 	/**
 	 *
 	 * 名前から商品を曖昧検索します.
@@ -40,10 +67,40 @@ public class ShowItemListService {
 	 * @param integer 
 	 * @return 検索された商品一覧
 	 */
-	public List<Item> searchByName(String name) {
-		List<Item> itemList = itemRepository.findByLikeName(name);
-		return itemList;
-	}
+//	public List<Item> searchByName(String name) {
+//		List<Item> itemList = itemRepository.findByLikeName(name);
+//		return itemList;
+//	}
+	
+	/**
+	 * 商品一覧情報を並び替えます.
+	 * 
+	 * @param form　選択された並び替えの順
+	 * @return  並び替えた商品の情報一覧
+	 */
+//	public List<Item> searchBySomeway(SearchForm form) {
+//		//検索する値が分類0または1の場合
+//		if (form.getSort().equals(0) || form.getSort().equals(1)) {
+//			//Mサイズの価格の低い順に並べ替え
+//			return itemRepository.orderByLowerMsizePrice();
+//		//検索する値が分類2の場合
+//		} else if (form.getSort().equals(2)) {
+//			//Mサイズの価格の高い順に並べ替え
+//			return itemRepository.orderByHigherMsizePrice();
+//		//検索する値が分類3の場合	
+//		} else if (form.getSort().equals(3)) {
+//			//Lサイズの価格が低い順に並べ替え
+//			return itemRepository.orderByLowerLsizePrice();
+//		} else {
+//			//Lサイズの価格の高い順に並べ替え
+//			return itemRepository.orderByHigherLsizePrice();
+//		}
+//	}
+	
+	
+	
+	
+	
 
 
 	/**
@@ -67,75 +124,6 @@ public class ShowItemListService {
 		return itemListForAutocomplete;
 	}
 	
-	
-	
 
-	
-	/**
-	 *
-	 * 名前から商品を曖昧検索します.(ページング用)
-	 * 
-	 * @param name 商品名
-	 * @return 検索された商品一覧
-	 */
-//	public List<Item> searchByName(String name,Integer offset) {
-//		List<Item> itemList = itemRepository.findByLikeName(name,offset);
-//		return itemList;
-//	}
-
-	/**
-	 * 
-	 * 名前から商品を全件検索します.(ページング用)
-	 * 
-	 * @param offset sql検索対象の始まりのid
-	 * @return 商品情報一覧
-	 */
-//	public List<Item> showItemList(Integer offset) {
-//		List<Item> itemList = itemRepository.findAll(offset);
-//		return itemList;
-//	}
-	
-	/**
-	 * culumの値によってrepositoryに渡す値を変えてアイテム情報を検索する.
-	 * 
-	 * @param culum カラム名
-	 * @param offset　検索開始位置
-	 * @return　アイテム情報
-	 */
-//	public List<Item> showItemListOrderByCulum(String culum,Integer offset){
-//		List<Item> itemList = new ArrayList<Item>();
-//		if(culum.equals("1")) {
-//			culum = "price_m";
-//			itemList = itemRepository.findAllOrderByCulum(culum, offset);
-//		}else if(culum.equals("2")) {
-//			culum = "price_m DESC";
-//			itemList = itemRepository.findAllOrderByCulum(culum, offset);
-//		} else if(culum.equals("0")) {
-//			itemList = itemRepository.findAll(offset);
-//		}
-//		return itemList;
-//	}
-	
-	/**
-	 * culumの値によってrepositoryに渡す値を変えて、nameの値でアイテム情報を検索する.
-	 * 
-	 * @param name 名前
-	 * @param culum　カラム名
-	 * @param offset　検索開始位置
-	 * @return　アイテム情報
-	 */
-//	public List<Item> searchByNameOrderByCulum(String name,String culum,Integer offset){
-//		List<Item> itemList = new ArrayList<Item>();
-//		if(culum.equals("1")) {
-//			culum = "price_m";
-//			itemList = itemRepository.findByLikeNameOrderByCulum(name, culum, offset);
-//		}else if(culum.equals("2")) {
-//			culum = "price_m DESC";
-//			itemList = itemRepository.findByLikeNameOrderByCulum(name, culum, offset);
-//		} else if(culum.equals("0")) {
-//			itemList = itemRepository.findByLikeName(name, offset);
-//		}
-//		return itemList;
-//	}
 	
 }

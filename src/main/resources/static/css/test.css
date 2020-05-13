@@ -11,3 +11,6 @@
         justify-self:center;
 }
 
+.pagination {
+  justify-content: center;
+}

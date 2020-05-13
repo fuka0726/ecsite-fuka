@@ -14,6 +14,19 @@ xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/s
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+	<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/search.js}"></script>
+<script>
+$( function() {
+  var availableTags = [ [(${itemListForAutocomplete})] ];
+ 
+  $( "#searchName" ).autocomplete({
+    source: availableTags
+  });
+} );
+</script>        
+    
+    
 </head>
 <body>
 	<div class="container">
@@ -58,25 +71,62 @@ xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/s
 					</div>
 					<div class="panel-body">
 					<span th:text="${errormessage}"></span>
-						<form method="post" action="item_list_coffee.html" class="form-horizontal" th:action="@{/showItemList}">
-							<span th:text="${errormessage}"></span>
+						<form id="searchForm" method="post" action="item_list_coffee.html" class="form-horizontal" th:action="@{/showItemList}" th:object="${searchForm}">
 							<div class="form-group">
-								<label for="code" class="control-label col-sm-2">商品名</label>
+								<label for="name" class="control-label col-sm-2">商品名</label>
 								<div class="col-sm-9">
 									<input type="text" name="searchName" id="searchName"
-										th:value="${session.searchName}" class="form-control input-sm" />
+										 class="form-control input-sm" th:field="*{name}" />
 								</div>
 							</div>
 							<div class="text-center">
-								<button type="button" value="検索" class="btn btn-primary">検索</button>
-								<button type="reset" id="reset" class="btn btn-default">クリア</button>
+								<button type="submit" value="検索" class="btn btn-primary">検索</button>
+								<button type="reset" value="クリア" id="reset" class="btn btn-default">クリア</button>
 							</div>
+							<span th:text="${message}"></span>
+							
+	<select id="sort-select" name="sort">
+		<option value="0" th:field="*{sort}">- 商品の並び順を変更 -</option>
+		<option value="1" th:field="*{sort}">Mサイズの価格が安い順</option>
+		<option value="2" th:field="*{sort}">Mサイズの価格が高い順</option>
+		<option value="3" th:field="*{sort}">Lサイズの価格が安い順</option>
+		<option value="4" th:field="*{sort}">Lサイズの価格が高い順</option>
+	</select>
+	
+	<div class="pager">
+						<span th:text="'現在'+${nowPageNumber}+'ページ'" style="display: inline"></span>&nbsp;
+							<span th:each="pageNumber:${pageNumberList}">
+								<input type="hidden" name="page">
+							<button class="page-button" th:text="${pageNumber}" type="button" name="page" th:value="${pageNumber}"></button>
+						</span>&nbsp;&nbsp;
+					</div>
+	
+	
+	
 						</form>
 					</div>
 				</div>
 			</div>
 		</div>
+	<!-- <form id="search_form" th:action="@{/showItemList}" th:object="${searchForm}" method="post">
+		<select id="sort_select" name="sort" th:field="*{sort}"></select>
+	<select id="sort_select" name="sort">
+		<option value="0" selected>商品の並び順を変更</option>
+		<option value="1">Mサイズの価格が安い順</option>
+		<option value="2">Mサイズの価格が高い順</option>
+		<option value="3">Lサイズの価格が安い順</option>
+		<option value="4">Lサイズの価格が高い順</option>
+	</select> -->
 
+	<!-- <script>
+	$(function(){
+		$("#search_form").change(function(){
+			$("#sort-select").submit();
+		});
+	});
+	</script> -->
+	
+		
 		<!-- table -->
 		<div class="row">
 		
@@ -100,9 +150,24 @@ xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/s
 			</div>
 		</div>
 	</div>
+
+
+
+					<div class="pager">
+						<span th:text="'現在'+${nowPageNumber}+'ページ'" style="display: inline"></span>&nbsp;
+							<span th:each="pageNumber:${pageNumberList}">
+								<input type="hidden" name="page">
+							<button class="page-button" th:text="${pageNumber}" type="button" name="page" th:value="${pageNumber}"></button>
+						</span>&nbsp;&nbsp;
+					</div>
+					
+	
 	<!-- end container -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="../static/js/bootstrap.min.js"></script>
+	<!-- <script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+	<!-- <script src="../static/js/search.js" th:src="@{/js/search.js}"></script> -->
 </body>
 </html>
