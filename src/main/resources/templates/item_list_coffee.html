@@ -85,25 +85,22 @@ $( function() {
 							</div>
 							<span th:text="${message}"></span>
 							
-	<select id="sort-select" name="sort">
-		<option value="0" th:field="*{sort}">- 商品の並び順を変更 -</option>
-		<option value="1" th:field="*{sort}">Mサイズの価格が安い順</option>
-		<option value="2" th:field="*{sort}">Mサイズの価格が高い順</option>
-		<option value="3" th:field="*{sort}">Lサイズの価格が安い順</option>
-		<option value="4" th:field="*{sort}">Lサイズの価格が高い順</option>
-	</select>
+							<select id="sort-select" name="sort">
+									<option value="0" th:field="*{sort}">- 商品の並び順を変更 -</option>
+									<option value="1" th:field="*{sort}">Mサイズの価格が安い順</option>
+									<option value="2" th:field="*{sort}">Mサイズの価格が高い順</option>
+									<option value="3" th:field="*{sort}">Lサイズの価格が安い順</option>
+									<option value="4" th:field="*{sort}">Lサイズの価格が高い順</option>
+							</select>
 	
-	<div class="pager">
-						<span th:text="'現在'+${nowPageNumber}+'ページ'" style="display: inline"></span>&nbsp;
-							<span th:each="pageNumber:${pageNumberList}">
+							<div class="pager">
+								<span th:text="${nowPageNumber}+'ページ目表示中'" style="display: inline"></span>&nbsp;
+								<span th:each="pageNumber:${pageNumberList}">
 								<input type="hidden" name="page">
-							<button class="page-button" th:text="${pageNumber}" type="button" name="page" th:value="${pageNumber}"></button>
-						</span>&nbsp;&nbsp;
-					</div>
-	
-	
-	
-						</form>
+								<button class="page-button" th:text="${pageNumber}" type="button" name="page" th:value="${pageNumber}"></button>
+							</span>&nbsp;&nbsp;
+						</div>
+					</form>
 					</div>
 				</div>
 			</div>

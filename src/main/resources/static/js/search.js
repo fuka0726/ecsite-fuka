@@ -1,9 +1,8 @@
 $(function(){
 
 	var name = $('#searchForm [name="name"]').val();
-//	var currentPage = parseInt($('#searchForm [name=page]').val());
 	
-	
+	//ページング機能
 	$('.page-button').on("click", function(){
 		var page = $(this).val();
 		var sort = $('#sort-select option:selected').val();
@@ -16,7 +15,7 @@ $(function(){
 	
 	
 	
-	
+	//商品の並べ替え機能
 	$('#sort-select').on('change', function(){
 		var name = $('#searchForm [name="name"]').val();
 		var sort = $('#sort-select option:selected').val();
@@ -28,7 +27,7 @@ $(function(){
 		
 	});
 	
-	
+	//検索フォームのクリアボタン機能
 	 $("#reset").on("click", function () {
 	        $("#searchName").val("");
 	  
