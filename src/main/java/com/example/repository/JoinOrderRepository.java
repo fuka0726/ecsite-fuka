@@ -49,6 +49,7 @@ public class JoinOrderRepository {
 				order.setStatus(rs.getInt("A_status"));
 				order.setTotalPrice(rs.getInt("A_total_price"));
 				order.setOrderDate(rs.getDate("A_order_date"));
+//				order.setOrderNumber(rs.getString("A_order_number"));
 				order.setDestinationName(rs.getString("A_destination_name"));
 				order.setDestinationEmail(rs.getString("A_destination_email"));
 				order.setDestinationZipcode(rs.getString("A_destination_zipcode"));
@@ -133,5 +134,23 @@ public class JoinOrderRepository {
 		List<Order> orderList = template.query(sql, param, ORDER_RESULT_SET_EXTRACTOR);
 		return orderList;
 	}
+	
+	
+//	public List<Order> findByUserIdAndStatus(Integer userId, Integer status) {
+//		String sql = "SELECT A.id A_id, A.user_id A_user_id, A.status A_status, A.total_price A_total_price, A.order_date A_order_date, A.order_number A_order_number"
+//				+ "A.destination_name A_destination_name, A.destination_email A_destination_email, A.destination_zipcode "
+//				+ "A_destination_zipcode, A.destination_address A_destination_address, A.destination_tel A_destination_tel, "
+//				+ "A.delivery_time A_delivery_time, A.payment_method A_payment_method, B.id B_id, B.item_id B_item_id, B.order_id B_order_id, "
+//				+ "B.quantity B_quantity, B.size B_size, C.id C_id, C.name C_name, C.description C_description, C.price_m C_price_m, C.price_l "
+//				+ "C_price_l, C.image_path C_image_path, C.deleted C_deleted, D.id D_id, D.topping_id D_topping_id, D.order_item_id D_order_item_id, "
+//				+ "E.id E_id, E.name E_name, E.price_m E_price_m, E.price_l E_price_l "
+//				+ "FROM orders A FULL OUTER JOIN order_items B ON A.id = B.order_id FULL OUTER JOIN items C  ON B.item_id = C.id  "
+//				+ "FULL OUTER JOIN order_toppings D ON B.id = D.order_item_id FULL OUTER JOIN toppings E ON D.topping_id = E.id "
+//				+ "WHERE A.user_id = :userId AND A.status = :status ORDER BY A_id";
+//		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId).addValue("status", status);
+//		List<Order> orderList = template.query(sql, param, ORDER_RESULT_SET_EXTRACTOR);
+//		return orderList;
+//	}
+	
 
 }

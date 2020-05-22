@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.util.StringBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -146,6 +147,18 @@ public class ItemRepository {
 		return startNumber;
 	}
 
+	
+	/**
+	 * 商品を追加する(バッジ処理用).
+	 * 
+	 * @param item 商品情報
+	 */
+	public void insert (Item item) {
+		SqlParameterSource param = new BeanPropertySqlParameterSource(item);
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO items VALUES (:id,:name,:description,:priceM,:priceL,:imagePath,:deleted) ");
+		template.update(sql.toString(), param);
+	}
 	
 	
 	/**

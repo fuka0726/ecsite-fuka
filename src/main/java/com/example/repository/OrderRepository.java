@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.logging.log4j.util.StringBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,6 +34,7 @@ public class OrderRepository {
 		order.setStatus(rs.getInt("status"));
 		order.setTotalPrice(rs.getInt("total_price"));
 		order.setOrderDate(rs.getDate("order_date"));
+//		order.setOrderNumber(rs.getString("order_number"));
 		order.setDestinationName(rs.getString("destination_name"));
 		order.setDestinationEmail(rs.getString("destination_email"));
 		order.setDestinationZipcode(rs.getString("destination_zipcode"));
@@ -139,8 +141,15 @@ public class OrderRepository {
 //			template.update(insertSql, param);
 //		}
 //	}
+	/**
+	 * Orderオブジェクトを更新します.
+	 * @param order orderオブジェクト
+	 */
 	public void updateStatus(Order order) {
-		String sql = "UPDATE orders SET status = :status,payment_method =:status,destination_name =:destinationName,"
+		String sql = "UPDATE orders SET status = :status,payment_method =:status,"
+				+ "order_date=:orderDate,"
+//				+ " order_number = :orderNumber || to_char(nextval('order_number_seq'), 'FM0000'),"
+				+ " destination_name =:destinationName,"
 				+ "destination_email =:destinationEmail,destination_zipcode =:destinationZipcode,"
 				+ "destination_address =:destinationAddress,destination_tel =:destinationTel,"
 				+ "delivery_time=:deliveryTime,order_date =:orderDate,total_price=:totalPrice "
@@ -184,5 +193,46 @@ public class OrderRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
 		template.update(sql, param);
 	}
+	
+	
+	/**
+	 * 全ての注文済みOrderを取得する(管理者用).
+	 * @return 全ての注文済みOrder
+	 */
+	public List<Order> findAllOrder(){
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT id, user_id, status, total_price, order_number,　destination_name ");
+		sql.append("FROM orders WHERE status <> 0  ORDER BY order_date");
+		List<Order> orderList = template.query(sql.toString(), ORDER_ROW_MAPPER);
+		if (orderList.size() == 0) {
+			return null;
+		}
+		return orderList;
+	}
+	
+	
+	/**
+	 *特定のユーザの注文済のorder情報を検索する.
+	 *
+	 * @param userId ユーザーid
+	 * @return　特定ユーザーの注文済のOrder情報
+	 */
+	public List<Order> findByUserId(Integer userId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT id, user_id, status, total_price, order_date, order_number, destination_name ");
+		sql.append("FROM orders WHERE status<> 0 AND user_id = :userId ORDER BY order_date");
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
+		List<Order> orderHistoryList = template.query(sql.toString(), param, ORDER_ROW_MAPPER);
+		
+		if (orderHistoryList.size() == 0) {
+			return null;
+		}
+		return orderHistoryList;
+	}
+	
+	
+	
+	
+	
 
 }

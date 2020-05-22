@@ -56,6 +56,13 @@ public class ShowItemListService {
 		return item;
 	}
 	
+	/**
+	 * 商品を追加する(バッジ処理用).
+	 * @param item
+	 */
+	public void insert(Item item) {
+		itemRepository.insert(item);
+	}
 	
 	
 	

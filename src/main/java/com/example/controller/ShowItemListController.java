@@ -73,7 +73,7 @@ public class ShowItemListController {
 			maxPage = count / VIEW_SIZE;
 		//商品数が6で割り切れなかった場合ページ数を１増やす
 		} else {
-			maxPage++;
+			maxPage = count / VIEW_SIZE + 1; 
 		}
 		
 		List <Integer> pageNumberList = new ArrayList<>();
@@ -85,7 +85,7 @@ public class ShowItemListController {
 		model.addAttribute("nowPageNumber", form.getPage());
 		model.addAttribute("pageNumberList", pageNumberList);
 		model.addAttribute("itemList", itemList);
-		model.addAttribute("maxPage", maxPage);
+//		model.addAttribute("maxPage", maxPage);
 		
 		
 		//商品名検索機能
